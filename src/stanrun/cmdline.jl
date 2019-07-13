@@ -58,14 +58,12 @@ function cmdline(m::Union{DiagnoseModel, Diagnose, Gradient, StanBase.RandomSeed
   else
     
     # The 'recursive' part
-    if isa(m, Diagnose)
-      cmd = `$cmd algorithm=$(split(lowercase(string(typeof(m))), '.')[end])`
+    if isa(m, Diagnostics)
+      cmd = `$cmd test=$(split(lowercase(string(typeof(m))), '.')[end])`
+    elseif typeof(m) == StanBase.RandomSeed
+      cmd = `$cmd random`
     else
-      if typeof(m) == StanBase.RandomSeed
-        cmd = `$cmd random`
-      else
-        cmd = `$cmd $(split(lowercase(string(typeof(m))), '.')[end])`
-      end
+      cmd = `$cmd $(split(lowercase(string(typeof(m))), '.')[end])`
     end
     for name in fieldnames(typeof(m))
       if  isa(getfield(m, name), String) || isa(getfield(m, name), Tuple)

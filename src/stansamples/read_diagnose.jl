@@ -19,12 +19,11 @@ function read_diagnose(model::DiagnoseModel)
   
   ## Collect the results of a chain in an array ##
   
-  cnames = String[]
-  res_type = "diagnose"
+  res_type = "chain"
   tdict = Dict()
   local sstr
   
-  for i in 1:model.nchains
+  for i in 1:StanBase.get_n_chains(model)
     if isfile("$(model.output_base)_$(res_type)_$(i).csv")
       
       ## A result type file for chain i is present ##
@@ -36,9 +35,7 @@ function read_diagnose(model::DiagnoseModel)
         
         str = read(instream, String)
         sstr = split(str)
-        tdict[:stan_major_version] = [parse(Int, sstr[4])]
-        tdict[:stan_minor_version] = [parse(Int, sstr[8])]
-        tdict[:stan_patch_version] = [parse(Int, sstr[12])]
+        tdict[:stan_version] = "$(parse(Int, sstr[4])).$(parse(Int, sstr[8])).$(parse(Int, sstr[12]))"
       end
       
       # Position sstr at the beginning of last comment line
@@ -67,7 +64,7 @@ function read_diagnose(model::DiagnoseModel)
     end
   end
       
-  (tdict, cnames)
+  tdict
   
 end
 

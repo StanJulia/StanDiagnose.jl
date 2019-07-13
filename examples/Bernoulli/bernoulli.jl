@@ -1,6 +1,6 @@
 ######## CmdStan diagnose example  ###########
 
-using StanDiagnose, Test, Statistics
+using StanDiagnose
 
 ProjDir = dirname(@__FILE__)
 
@@ -19,18 +19,16 @@ model {
 "
 bernoulli_data = Dict("N" => 10, "y" => [0, 1, 0, 1, 0, 0, 0, 0, 0, 1])
 
+tmpdir = joinpath(@__DIR__, "tmp")
+
 stanmodel = DiagnoseModel("bernoulli", bernoulli_model;
-  StanDiagnose.Diagnose(StanDiagnose.Gradient(epsilon=1e-6)));
+  method=StanDiagnose.Diagnose(StanDiagnose.Gradient(epsilon=1e-6)),
+  tmpdir = tmpdir);
 
 (sample_file, log_file) = stan_sample(stanmodel; data=bernoulli_data);
 
-diags = read_diagnose(stanmodel)
-
-if rc == 0
+if sample_file !== Nothing
+  diags = read_diagnose(stanmodel)
   println()
   display(diags)
-  println()
-  tmp = diags[:error][1]
-  println("Test round.(diags[:error], digits=6) ≈ 0.0")
-  @test round.(tmp, digits=6) ≈ 0.0
 end

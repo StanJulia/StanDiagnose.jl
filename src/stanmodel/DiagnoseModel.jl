@@ -1,5 +1,5 @@
 """
-# OptimizeModel 
+# DiagnoseModel 
 
 Create a DiagnoseModel. 
 
@@ -33,10 +33,10 @@ Create a DiagnoseModel.
 """
 mutable struct DiagnoseModel <: CmdStanModels
   @shared_fields_stanmodels
-  method::Optimize
+  method::Diagnose
 end
 
-function OptimizeModel(
+function DiagnoseModel(
   name::AbstractString,
   model::AbstractString,
   n_chains=[4];
@@ -61,7 +61,7 @@ function OptimizeModel(
     Cmd[], String[], String[], String[], false, false, sm, method)
 end
 
-function diagnose_show(io::IO, m::DiagnoseModel, compact::Bool)
+function diagnose_model_show(io::IO, m::DiagnoseModel, compact::Bool)
   println("  name =                    \"$(m.name)\"")
   println("  n_chains =                $(StanBase.get_n_chains(m))")
   println("  output =                  Output()")
@@ -69,7 +69,7 @@ function diagnose_show(io::IO, m::DiagnoseModel, compact::Bool)
   println("    diagnostics_file =        \"$(m.output.diagnostic_file)\"")
   println("    refresh =                 $(m.output.refresh)")
   println("  tmpdir =                  \"$(m.tmpdir)\"")
-  optimize_show(io, m.method, compact)
+  diagnose_show(io, m.method, compact)
 end
 
-show(io::IO, m::DiagnoseModel) = diagnose_show(io, m, false)
+show(io::IO, m::DiagnoseModel) = diagnose_model_show(io, m, false)

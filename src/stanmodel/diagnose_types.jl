@@ -53,7 +53,7 @@ Diagnose(;d=Gradient())
 ?Gradient                     : Currently sole diagnostic method
 ```
 """
-mutable struct Diagnose <: Method
+mutable struct Diagnose
   diagnostic::Diagnostics
 end
 Diagnose(;d=Gradient()) = Diagnose(d)

@@ -57,9 +57,8 @@ mutable struct Diagnose
   diagnostic::Diagnostics
 end
 Diagnose(;d=Gradient()) = Diagnose(d)
-#Diagnose(d=Gradient()) = Diagnose(d)
 
-function diagnose_show(io::IO, d::Diagnose, compact::Bool)
+function diagnose_show(io::IO, d::StanDiagnose.Diagnose, compact::Bool)
   if compact
     println("Diagnose($(d.diagnostic))")
   else
@@ -72,4 +71,4 @@ function diagnose_show(io::IO, d::Diagnose, compact::Bool)
   end
 end
 
-show(io::IO, d::Diagnose) = diagnose_show(io, d, false)
+show(io::IO, d::StanDiagnose.Diagnose) = diagnose_show(io, d, false)

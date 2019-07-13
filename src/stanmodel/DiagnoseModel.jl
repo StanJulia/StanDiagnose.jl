@@ -61,15 +61,15 @@ function DiagnoseModel(
     Cmd[], String[], String[], String[], false, false, sm, method)
 end
 
-function diagnose_model_show(io::IO, m::DiagnoseModel, compact::Bool)
+function diagnose_show(io::IO, m::StanDiagnose.DiagnoseModel, compact::Bool)
   println("  name =                    \"$(m.name)\"")
   println("  n_chains =                $(StanBase.get_n_chains(m))")
   println("  output =                  Output()")
-  println("    file =                    \"$(m.output.file)\"")
-  println("    diagnostics_file =        \"$(m.output.diagnostic_file)\"")
+  println("    file =                    \"$(split(m.output.file, "/")[end])\"")
+  println("    diagnostics_file =        \"$(split(m.output.diagnostic_file, "/")[end])\"")
   println("    refresh =                 $(m.output.refresh)")
   println("  tmpdir =                  \"$(m.tmpdir)\"")
   diagnose_show(io, m.method, compact)
 end
 
-show(io::IO, m::DiagnoseModel) = diagnose_model_show(io, m, false)
+show(io::IO, m::DiagnoseModel) = StanDiagnose.diagnose_show(io, m, false)

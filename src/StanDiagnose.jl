@@ -14,11 +14,11 @@ using Reexport
 
 @reexport using StanBase
 
-using Random
 using DocStringExtensions: FIELDS, SIGNATURES, TYPEDEF
 
 import StanRun: stan_sample, stan_cmd_and_paths, default_output_base
 import StanBase: cmdline
+import Base.show
 
 include("stanmodel/diagnose_types.jl")
 include("stanmodel/DiagnoseModel.jl")

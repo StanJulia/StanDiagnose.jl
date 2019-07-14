@@ -23,6 +23,7 @@ function cmdline(m::Union{DiagnoseModel, Diagnose, Gradient, StanBase.RandomSeed
   =#
   
   cmd = ``
+  # parse top level
   if isa(m, DiagnoseModel)
     # Handle the model name field for unix and windows
     cmd = `$(m.exec_path)`
@@ -55,30 +56,24 @@ function cmdline(m::Union{DiagnoseModel, Diagnose, Gradient, StanBase.RandomSeed
     end
     cmd = `$cmd refresh=$(string(getfield(m, :output).refresh))`
     
-  else
+  else # The 'recursive' part, currently only Gradient <: Diagnostics
     
-    # The 'recursive' part
     if isa(m, Diagnostics)
+      # Inset 'test=gradient' into cmdline
       cmd = `$cmd test=$(split(lowercase(string(typeof(m))), '.')[end])`
     elseif typeof(m) == StanBase.RandomSeed
+      # Only valid after we're done with method specifics 
       cmd = `$cmd random`
     else
+      # Insert initial `diagnose` into cmdline
       cmd = `$cmd $(split(lowercase(string(typeof(m))), '.')[end])`
     end
     for name in fieldnames(typeof(m))
-      if  isa(getfield(m, name), String) || isa(getfield(m, name), Tuple)
+      if length(fieldnames(typeof(getfield(m, name)))) == 0
         cmd = `$cmd $(name)=$(getfield(m, name))`
-      elseif length(fieldnames(typeof(getfield(m, name)))) == 0
-        if isa(getfield(m, name), Bool)
-          cmd = `$cmd $(name)=$(getfield(m, name) ? 1 : 0)`
-        else
-          if name == :metric || isa(getfield(m, name), DataType)
-            cmd = `$cmd $(name)=$(split(lowercase(string(typeof(getfield(m, name)))), '.')[end])`
-          else
-            cmd = `$cmd $(name)=$(getfield(m, name))`
-          end
-        end
       else
+        # Composite (Gradient) object, handle all fields 
+        # (by recursively calling cmdline) 
         cmd = `$cmd $(cmdline(getfield(m, name), id))`
       end
     end

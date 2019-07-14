@@ -25,8 +25,11 @@ include("stanmodel/DiagnoseModel.jl")
 include("stanrun/cmdline.jl")
 include("stansamples/read_diagnose.jl")
 
+stan_diagnose = stan_sample
+
 export
   DiagnoseModel,
+  stan_diagnose,
   read_diagnose
 
 end # module

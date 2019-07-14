@@ -14,7 +14,7 @@ cmdline(m)
 * `m::SampleModel`                : CmdStanSampleModel
 ```
 """
-function cmdline(m::Union{DiagnoseModel, Diagnose, Gradient, StanBase.RandomSeed}, id)
+function cmdline(m::Union{DiagnoseModel, Diagnose, Gradient}, id)
   
   #=
   `./bernoulli diagnose test=gradient epsilon=1.0e-6 error=1.0e-6 
@@ -28,11 +28,11 @@ function cmdline(m::Union{DiagnoseModel, Diagnose, Gradient, StanBase.RandomSeed
     # Handle the model name field for unix and windows
     cmd = `$(m.exec_path)`
 
-    # Sample() specific portion of the model
+    # Sample() specific portion of the model, might be recursive
     cmd = `$cmd $(cmdline(getfield(m, :method), id))`
     
-    # Common to all models
-    cmd = `$cmd $(cmdline(getfield(m, :seed), id))`
+    # Common to all models, not recursive
+    cmd = `$cmd random seed=$(getfield(m, :seed).seed)`
     
     # Init file required?
     if length(m.init_file) > 0 && isfile(m.init_file[id])
@@ -61,9 +61,6 @@ function cmdline(m::Union{DiagnoseModel, Diagnose, Gradient, StanBase.RandomSeed
     if isa(m, Diagnostics)
       # Inset 'test=gradient' into cmdline
       cmd = `$cmd test=$(split(lowercase(string(typeof(m))), '.')[end])`
-    elseif typeof(m) == StanBase.RandomSeed
-      # Only valid after we're done with method specifics 
-      cmd = `$cmd random`
     else
       # Insert initial `diagnose` into cmdline
       cmd = `$cmd $(split(lowercase(string(typeof(m))), '.')[end])`

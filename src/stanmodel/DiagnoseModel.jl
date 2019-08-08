@@ -62,13 +62,13 @@ function DiagnoseModel(
 end
 
 function diagnose_show(io::IO, m::StanDiagnose.DiagnoseModel, compact::Bool)
-  println("  name =                    \"$(m.name)\"")
-  println("  n_chains =                $(StanBase.get_n_chains(m))")
-  println("  output =                  Output()")
-  println("    file =                    \"$(split(m.output.file, "/")[end])\"")
-  println("    diagnostics_file =        \"$(split(m.output.diagnostic_file, "/")[end])\"")
-  println("    refresh =                 $(m.output.refresh)")
-  println("  tmpdir =                  \"$(m.tmpdir)\"")
+  println(io, "  name =                    \"$(m.name)\"")
+  println(io, "  n_chains =                $(StanBase.get_n_chains(m))")
+  println(io, "  output =                  Output()")
+  println(io, "    file =                    \"$(split(m.output.file, "/")[end])\"")
+  println(io, "    diagnostics_file =        \"$(split(m.output.diagnostic_file, "/")[end])\"")
+  println(io, "    refresh =                 $(m.output.refresh)")
+  println(io, "  tmpdir =                  \"$(m.tmpdir)\"")
   diagnose_show(io, m.method, compact)
 end
 

@@ -1,7 +1,7 @@
 name = "StanDiagnose"
 uuid = "fb13fc95-9a72-5e81-90ef-432a29d7f4c2"
 authors = ["Rob J Goedman <goedman@mac.com>"]
-version = "1.1.0"
+version = "1.1.1"
 
 [deps]
 BinDeps = "9e28174c-4ba2-5203-b857-d8d62c4213ee"

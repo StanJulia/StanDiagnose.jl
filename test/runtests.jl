@@ -24,9 +24,9 @@ tmpdir = joinpath(@__DIR__, "tmp")
 
   stanmodel = DiagnoseModel("bernoulli", bernoulli_model;
     method=StanDiagnose.Diagnose(StanDiagnose.Gradient(epsilon=1e-6)));
-  (sample_file, log_file) = stan_diagnose(stanmodel; data=bernoulli_data);
+  rc = stan_diagnose(stanmodel; data=bernoulli_data);
 
-  if sample_file !== Nothing
+  if success(rc)
     diags = read_diagnose(stanmodel)
     tmp = diags[:error][1]
     @test round.(tmp, digits=6) ≈ 0.0
@@ -34,9 +34,9 @@ tmpdir = joinpath(@__DIR__, "tmp")
   
   stanmodel = DiagnoseModel("bernoulli", bernoulli_model;
     method=StanDiagnose.Diagnose(StanDiagnose.Gradient(epsilon=1e-8)));
-  (sample_file, log_file) = stan_diagnose(stanmodel; data=bernoulli_data);
+  rc2 = stan_diagnose(stanmodel; data=bernoulli_data);
 
-  if sample_file !== Nothing
+  if success(rc2)
     diags = read_diagnose(stanmodel)
     tmp = diags[:error][1]
     @test round.(tmp, digits=6) ≈ 0.0

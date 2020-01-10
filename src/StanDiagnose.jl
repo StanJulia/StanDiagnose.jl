@@ -10,7 +10,7 @@ using StanBase
 using DocStringExtensions: FIELDS, SIGNATURES, TYPEDEF
 
 import StanBase: stan_sample, get_cmdstan_home
-import StanBase: cmdline
+import StanBase: cmdline, stan_summary, read_summary
 
 include("stanmodel/diagnose_types.jl")
 include("stanmodel/DiagnoseModel.jl")
@@ -22,6 +22,8 @@ stan_diagnose = stan_sample
 export
   DiagnoseModel,
   stan_diagnose,
-  read_diagnose
+  read_diagnose,
+  read_summary,
+  stan_summary
 
 end # module

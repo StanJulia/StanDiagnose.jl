@@ -11,6 +11,7 @@ using DocStringExtensions: FIELDS, SIGNATURES, TYPEDEF
 
 import StanBase: stan_sample, get_cmdstan_home
 import StanBase: cmdline, stan_summary, read_summary
+import StanBase: RandomSeed, Init, Output
 
 include("stanmodel/diagnose_types.jl")
 include("stanmodel/DiagnoseModel.jl")

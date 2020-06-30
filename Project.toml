@@ -22,7 +22,7 @@ BinDeps = "1.0"
 CSV = "0.5, 0.6, 0.7"
 DataFrames = "0.20, 0.21"
 DocStringExtensions = "0.8"
-Documenter = "0.24"
+Documenter = "0.24, 0.25"
 StanBase = "1.1, 2.0"
 julia = "1"
 

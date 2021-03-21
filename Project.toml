@@ -1,7 +1,7 @@
 name = "StanDiagnose"
 uuid = "fb13fc95-9a72-5e81-90ef-432a29d7f4c2"
 authors = ["Rob J Goedman <goedman@mac.com>"]
-version = "2.2.3"
+version = "2.2.4"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"

@@ -18,15 +18,12 @@ if haskey(ENV, "JULIA_CMDSTAN_HOME")
       y ~ bernoulli(theta);
   }
   "
-  bernoulli_data = Dict("N" => 10, "y" => [0, 1, 0, 1, 0, 0, 0, 0, 0, 1])
-
-  tmpdir = joinpath(@__DIR__, "tmp")
+  data = Dict("N" => 10, "y" => [0, 1, 0, 1, 0, 0, 0, 0, 0, 1])
 
   @testset "Bernoulli diagnose" begin
 
-    stanmodel = DiagnoseModel("bernoulli", bernoulli_model;
-      method=StanDiagnose.Diagnose(StanDiagnose.Gradient(epsilon=1e-6)));
-    rc = stan_diagnose(stanmodel; data=bernoulli_data);
+    stanmodel = DiagnoseModel("bernoulli", bernoulli_model);
+    rc = stan_diagnose(stanmodel; data);
 
     if success(rc)
       diags = read_diagnose(stanmodel)
@@ -34,9 +31,8 @@ if haskey(ENV, "JULIA_CMDSTAN_HOME")
       @test round.(tmp, digits=6) ≈ 0.0
     end
     
-    stanmodel = DiagnoseModel("bernoulli", bernoulli_model;
-      method=StanDiagnose.Diagnose(StanDiagnose.Gradient(epsilon=1e-8)));
-    rc2 = stan_diagnose(stanmodel; data=bernoulli_data);
+    stanmodel = DiagnoseModel("bernoulli", bernoulli_model);
+    rc2 = stan_diagnose(stanmodel; data);
 
     if success(rc2)
       diags = read_diagnose(stanmodel)

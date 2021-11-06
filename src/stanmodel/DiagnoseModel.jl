@@ -1,56 +1,63 @@
-#import Base.show
+import Base: show
+
+mutable struct DiagnoseModel <: CmdStanModels
+    name::AbstractString;              # Name of the Stan program
+    model::AbstractString;             # Stan language model program
+
+    # Sample fields
+    num_chains::Int64;                 # Number of chains
+    num_threads::Int64;                # Number of threads
+
+    seed::Int;                         # Seed section of cmd to run cmdstan
+    refresh::Int;                      # Display progress in output files
+    init_bound::Int;                   # Bound for initial param values
+
+    # Check model gradient against finite difference
+    test::Symbol;                      # :gradient
+                                       
+    epsilon::Float64;                  # Finite difference step size
+    error::Float64;                    # Error threshold
+
+    output_base::AbstractString;       # Used for file paths to be created
+    tmpdir::AbstractString;            # Holds all created files
+    exec_path::AbstractString;         # Path to the cmdstan excutable
+    data_file::Vector{AbstractString}; # Array of data files input to cmdstan
+    init_file::Vector{AbstractString}; # Array of init files input to cmdstan
+    cmds::Vector{Cmd};                 # Array of cmds to be spawned/pipelined
+    sample_file::Vector{String};       # Sample file array (.csv)
+    log_file::Vector{String};          # Log file array
+    diagnostic_file::Vector{String};   # Diagnostic file array
+    cmdstan_home::AbstractString;      # Directory where cmdstan can be found
+end
 
 """
 # DiagnoseModel 
 
-Create a DiagnoseModel. 
+Create a DiagnoseModel and compile the Stan Language Model.. 
 
 ### Required arguments
 ```julia
-* `name::AbstractString`               : Name for the model
-* `model::AbstractString`              : Stan model source
+* `name::AbstractString`        : Name for the model
+* `model::AbstractString`       : Stan model source
 ```
 
-### Optional arguments
+### Optional positional argument
 ```julia
-* `n_chains::Vector{Int64}=[4]`        : Optionally updated in stan_sample()
-* `seed::RandomSeed`                   : Random seed settings
-* `output::Output`                     : File output options
-* `init::Init`                         : Default interval bound for parameters
-* `tmpdir::AbstractString`             : Directory where output files are stored
-* `output_base::AbstractString`        : Base name for output files
-* `exec_path::AbstractString`          : Path to cmdstan executable
-* `data_file::vector{AbstractString}`  : Path to per chain data file
-* `init_file::Vector{AbstractString}`  : Path to per chain init file
-* `cmds::Vector{Cmd}`                  : Path to per chain init file
-* `sample_file::Vector{String}         : Path to per chain samples file
-* `log_file::Vector{String}            : Path to per chain log file
-* `diagnostic_file::Vector{String}     : Path to per chain diagnostic file
-* `method::Diagnose`                   : Fix Optimize
+ `tmpdir::AbstractString`             : Directory where output files are stored
 ```
 
 """
-mutable struct DiagnoseModel <: CmdStanModels
-  @shared_fields_stanmodels
-  method::Diagnose
-end
-
 function DiagnoseModel(
   name::AbstractString,
   model::AbstractString,
-  n_chains=[4];
-  seed = StanBase.RandomSeed(),
-  init = StanBase.Init(),
-  output = StanBase.Output(),
-  tmpdir = mktempdir(),
-  method = Diagnose())
+  tmpdir = mktempdir())
   
   !isdir(tmpdir) && mkdir(tmpdir)
   
-  StanBase.update_model_file(joinpath(tmpdir, "$(name).stan"), strip(model))
+  update_model_file(joinpath(tmpdir, "$(name).stan"), strip(model))
   
   output_base = joinpath(tmpdir, name)
-  exec_path = StanBase.executable_path(output_base)
+  exec_path = executable_path(output_base)
   cmdstan_home = get_cmdstan_home()
 
   error_output = IOBuffer()
@@ -62,19 +69,45 @@ function DiagnoseModel(
       throw(StanModelError(model, String(take!(error_output))))
   end
 
-  DiagnoseModel(name, model, n_chains, seed, init, output,
-    tmpdir, output_base, exec_path, String[], String[], 
-    Cmd[], String[], String[], String[], false, false,
-    cmdstan_home, method)
+  DiagnoseModel(name, model, 
+    4,                                 # num_chains
+    4,                                 # num_threads
+
+    -1,                                # seed
+    100,                               # refresh
+    2,                                 # init_bound
+
+    :gradient,                         # Test argument
+    1e-6,                              # Epsilon
+    1e-6,                              # Error                        
+    
+    output_base,                       # Path to output files
+    tmpdir,                            # Tmpdir settings
+    exec_path,                         # exec_path
+    AbstractString[],                  # Data files
+    AbstractString[],                  # Init files
+    Cmd[],                             # Command lines
+    String[],                          # Sample .csv files
+    String[],                          # Log files
+    String[],                          # Diagnostic files
+    cmdstan_home)
 end
 
-function diagnose_show(io::IO, m::StanDiagnose.DiagnoseModel, compact::Bool)
-  println(io, "  name =                    \"$(m.name)\"")
-  println(io, "  n_chains =                $(StanBase.get_n_chains(m))")
-  println(io, "  output =                  Output()")
-  println(io, "    refresh =                 $(m.output.refresh)")
-  println(io, "  tmpdir =                  \"$(m.tmpdir)\"")
-  diagnose_show(io, m.method, compact)
-end
+function Base.show(io::IO, ::MIME"text/plain", m::DiagnoseModel)
+    println(io, "\nDiagnose section:")
+    println(io, "  name =                    ", m.name)
+    println(io, "  num_chains =              ", m.num_chains)
+    println(io, "  num_threads =             ", m.num_threads)
+    println(io, "  seed =                    ", m.seed)
+    println(io, "  refresh =                 ", m.refresh)
+    println(io, "  init_bound =              ", m.init_bound)
 
-show(io::IO, m::DiagnoseModel) = StanDiagnose.diagnose_show(io, m, false)
+    println(io, "\nGradient section:")
+    println(io, "  test =                    ", m.test)
+    println(io, "  epsilon =                 ", m.epsilon)
+    println(io, "  error =                   ", m.error)
+
+    println(io, "\nOther:")
+    println(io, "  output_base =             ", m.output_base)
+    println(io, "  tmpdir =                  ", m.tmpdir)
+end

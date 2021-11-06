@@ -15,7 +15,7 @@ read_diagnose(m::Diagnose<odel)
 ```
 
 """
-function read_diagnose(model::DiagnoseModel)
+function read_diagnose(m::DiagnoseModel)
   
   ## Collect the results of a chain in an array ##
   
@@ -23,12 +23,12 @@ function read_diagnose(model::DiagnoseModel)
   tdict = Dict()
   local sstr
   
-  for i in 1:StanBase.get_n_chains(model)
-    if isfile("$(model.output_base)_$(res_type)_$(i).csv")
+  for i in 1:m.num_chains
+    if isfile("$(m.output_base)_$(res_type)_$(i).csv")
       
       ## A result type file for chain i is present ##
       
-      instream = open("$(model.output_base)_$(res_type)_$(i).csv")
+      instream = open("$(m.output_base)_$(res_type)_$(i).csv")
       if i == 1
         
         # Extract cmdstan version

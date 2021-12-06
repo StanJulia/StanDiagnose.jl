@@ -14,7 +14,7 @@
 
 [issues-url]: https://github.com/stanjulia/StanDiagnose.jl/issues
 
-[project-status-img]: https://img.shields.io/badge/lifecycle-wip-orange.svg
+[project-status-img]: https://img.shields.io/badge/lifecycle-stable-green.svg
 
 ## Important note
 
@@ -28,7 +28,7 @@ This package is registered. Install with
 pkg> add StanDiagnose.jl
 ```
 
-You need a working [Stan's cmdstan](https://mc-stan.org/users/interfaces/cmdstan.html) installation, the path of which you should specify in `JULIA_CMDSTAN_HOME`, eg in your `~/.julia/config/startup.jl` have a line like
+You need a working [Stan's cmdstan](https://mc-stan.org/users/interfaces/cmdstan.html) installation, the path of which you should specify either in `CMDSTAN` or `JULIA_CMDSTAN_HOME`, eg in your `~/.julia/config/startup.jl` have a line like
 ```julia
 # CmdStan setup
 ENV["JULIA_CMDSTAN_HOME"] = expanduser("~/src/cmdstan-2.19.1/") # replace with your path

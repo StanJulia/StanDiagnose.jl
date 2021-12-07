@@ -50,7 +50,7 @@ Create a DiagnoseModel and compile the Stan Language Model..
 function DiagnoseModel(
   name::AbstractString,
   model::AbstractString,
-  tmpdir = mktempdir())
+  tmpdir = CMDSTAN_HOME)
   
   !isdir(tmpdir) && mkdir(tmpdir)
   

@@ -8,6 +8,7 @@ Draw from a StanJulia SampleModel (<: CmdStanModel.)
 ```julia
 * `m <: CmdStanModels`                 # SampleModel.
 * `use_json=true`                      # Use JSON3 for data and init files
+* `check_num_chains=true`              # Check for correct Julia chains and C++ chains
 ```
 
 ### Most frequently used keyword arguments
@@ -28,7 +29,6 @@ See extended help for other keyword arguments ( `??stan_sample` ).
 ### Additional configuration keyword arguments
 ```julia
 * `num_chains=4`                       # Update number of chains.
-* `num_threads=8`                      # Update number of threads.
 
 * `num_samples=1000`                   # Number of samples.
 * `num_warmups=1000`                   # Number of warmup samples.
@@ -43,9 +43,11 @@ See extended help for other keyword arguments ( `??stan_sample` ).
 * `error=1e-8`                         # Error threshold.
 ```
 """
-function stan_run(m::T, use_json=true; kwargs...) where {T <: CmdStanModels}
+function stan_run(m::T, 
+    use_json=true,
+    check_num_chains=true; kwargs...) where {T <: CmdStanModels}
 
-    handle_keywords!(m, kwargs)
+    handle_keywords!(m, kwargs, check_num_chains)
     
     # Diagnostics files requested?
     diagnostics = false

@@ -47,7 +47,7 @@ function stan_run(m::T,
     use_json=true,
     check_num_chains=true; kwargs...) where {T <: CmdStanModels}
 
-    handle_keywords!(m, kwargs, check_num_chains)
+    handle_keywords!(m, kwargs)
     
     # Diagnostics files requested?
     diagnostics = false

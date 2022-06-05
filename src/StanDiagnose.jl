@@ -9,7 +9,6 @@ module StanDiagnose
 using Reexport
 
 using DocStringExtensions: FIELDS, SIGNATURES, TYPEDEF
-using StanDump
 
 @reexport using StanBase
 
